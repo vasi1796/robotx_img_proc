@@ -51,22 +51,30 @@ int main( int argc, char** argv )
         int largest_area = 0;
         int largest_contour_index = 0;
         cv::Rect bounding_rect;
-        for (size_t i = 0; i< contours.size(); i++)
+        for (size_t index = 0; index< contours.size(); index++)
         {
-            double area = contourArea(contours[i]);
+            double area = contourArea(contours[index]);
 
             if (area > largest_area)
             {
                 largest_area = area;
-                largest_contour_index = i;               
-                bounding_rect = boundingRect(contours[i]);
+                largest_contour_index = index;               
+                bounding_rect = boundingRect(contours[index]);
             }
         }
+        drawContours(contourImage, contours, largest_contour_index, cv::Scalar(0, 255, 0), 2);
         if (bounding_rect.area())
         {
             cv::rectangle(image, bounding_rect, cv::Scalar(0, 255, 0), 2, 8, 0);
         }
-        drawContours(contourImage, contours, largest_contour_index, cv::Scalar(0, 255, 0), 2);
+
+        //maybe use matchShapes
+        double hu[7];
+        if (!contours.empty())
+        {
+            cv::Moments mom=cv::moments(contours[largest_contour_index]);
+            cv::HuMoments(mom, hu);
+        }
 
         imshow("original", image);
         imshow("contours", contourImage);
