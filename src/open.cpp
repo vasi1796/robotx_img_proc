@@ -27,6 +27,7 @@ int returnLargestContour(std::vector<std::vector<cv::Point>> contours)
     }
     return largest_contour_index;
 }
+
 int main( int argc, char** argv )
 {
     cv::Mat image;
@@ -45,9 +46,9 @@ int main( int argc, char** argv )
     //cv::waitKey(0);
 
 #ifdef __linux
-    raspicam::RaspiCam_Cv Camera;
-    Camera.set(CV_CAP_PROP_FORMAT, CV_8UC3);
-    if (!Camera.open())                              // Check for invalid input
+    raspicam::RaspiCam_Cv cap;
+    cap.set(CV_CAP_PROP_FORMAT, CV_8UC3);
+    if (!cap.open())                              // Check for invalid input
     {
         std::cout << "Could not open or find the image" << std::endl;
         return -1;
@@ -57,44 +58,24 @@ int main( int argc, char** argv )
     
     if (!cap.isOpened())
     {
+        std::cout << "Could not open or find the image" << std::endl;
         return -1;
     }
 #endif
     while (cv::waitKey(1) != 'q')
     {
-#ifdef __linux
-        Camera.grab();
-        Camera.retrieve(image);
-#elif _WIN32
-        cap >> image;
+        cap.grab();
+        cap.retrieve(image);
         cv::resize(image, image, cv::Size(400, 400));
-#endif
         ColorSegmentation::OthaSpaceThresholdingRGB(image, true, false, false, msk);
         //dilate the msk to cover white spots
         cv::dilate(msk, msk, cv::Mat(), cv::Point(-1, -1), 2, 1, 1);
 
         cv::Mat contourImage(image.size(), CV_8UC3, cv::Scalar(0, 0, 0));
         cv::findContours(msk.clone(), contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
-        int largest_area = 0;
-        int largest_contour_index = 0;
+        int largest_area = -1;
+        int largest_contour_index = -1;
 
-        //test contours and hu moments
-        //cv::Rect bounding_rect;
-        //for (size_t index = 0; index< contours.size(); index++)
-        //{
-        //    double area = contourArea(contours[index]);
-
-        //    if (area > largest_area)
-        //    {
-        //        largest_area = area;
-        //        largest_contour_index = index;               
-        //        bounding_rect = boundingRect(contours[index]);
-        //    }
-        //}
-        //if (bounding_rect.area())
-        //{
-        //    cv::rectangle(image, bounding_rect, cv::Scalar(0, 255, 0), 2, 8, 0);
-        //}
         ////maybe use matchShapes
         //double hu[7];
         //if (!contours.empty())
@@ -108,15 +89,18 @@ int main( int argc, char** argv )
         {
             double area = contourArea(contours[index]);
 
-            if (area > 2000)
+            if (area > 1000)
             {
-                if (cv::matchShapes(contours[index], ref_contours[ref_contour_idx], 1, 0) < 0.05) 
+                if (cv::matchShapes(contours[index], ref_contours[ref_contour_idx], 1, 0) < 0.1) 
                 {
                     largest_contour_index = index;
                 }
             }
         }
-        drawContours(contourImage, contours, largest_contour_index, cv::Scalar(0, 255, 0), 2);
+        if (largest_contour_index > 0)
+        {
+            drawContours(contourImage, contours, largest_contour_index, cv::Scalar(0, 255, 0), 2);
+        }
 
         imshow("original", image);
         imshow("contours", contourImage);
