@@ -11,7 +11,7 @@
 #endif
 #include <iostream>
 #include "ColorSegmentation.h"
-int returnLargestContour(std::vector<std::vector<cv::Point>> contours)
+int returnLargestContour(std::vector<std::vector<cv::Point> > contours)
 {
     int largest_area = 0;
     int largest_contour_index = 0;
@@ -108,7 +108,7 @@ int main( int argc, char** argv )
     }
     cv::destroyAllWindows();
 #ifdef __linux
-    Camera.release();
+    cap.release();
 #endif
     return 0;
 }
