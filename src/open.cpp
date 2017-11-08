@@ -35,7 +35,7 @@ int main( int argc, char** argv )
     std::vector<std::vector<cv::Point> > contours;
 
     std::vector<std::vector<cv::Point> > ref_contours;
-    cv::Mat ref_obj=cv::imread("ball.jpg");
+    cv::Mat ref_obj=cv::imread("../res/ball.jpg");
     cv::Mat ref_msk = ref_obj.clone();
     cv::cvtColor(ref_msk, ref_msk, cv::COLOR_BGR2GRAY);
     ColorSegmentation::OthaSpaceThresholdingRGB(ref_obj, true, false, false, ref_msk);
@@ -87,7 +87,7 @@ int main( int argc, char** argv )
         
         for (size_t index = 0; index < contours.size(); index++)
         {
-            double area = contourArea(contours[index]);
+            int area = contourArea(contours[index]);
 
             if (area > 1000)
             {
@@ -99,12 +99,13 @@ int main( int argc, char** argv )
         }
         if (largest_contour_index > 0)
         {
-            drawContours(contourImage, contours, largest_contour_index, cv::Scalar(0, 255, 0), 2);
+            drawContours(image, contours, largest_contour_index, cv::Scalar(0, 255, 0), 2);
+            //drawContours(contourImage, contours, largest_contour_index, cv::Scalar(0, 255, 0), 2);
         }
 
         imshow("original", image);
-        imshow("contours", contourImage);
-        imshow("mask", msk);
+        //imshow("contours", contourImage);
+        //imshow("mask", msk);
     }
     cv::destroyAllWindows();
 #ifdef __linux
