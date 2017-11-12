@@ -1,0 +1,8 @@
+////maybe use matchShapes
+        //double hu[7];
+        //if (!contours.empty())
+        //{
+        //    cv::Moments mom=cv::moments(contours[largest_contour_index]);
+        //    cv::HuMoments(mom, hu);
+        //}
+        //double avg = cv::matchShapes(contours[largest_contour_index], ref_contours[ref_contour_idx], 1, 0);

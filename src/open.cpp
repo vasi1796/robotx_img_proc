@@ -11,39 +11,13 @@
 #endif
 #include <iostream>
 #include "ColorSegmentation.h"
-int returnLargestContour(std::vector<std::vector<cv::Point> > contours)
-{
-    int largest_area = 0;
-    int largest_contour_index = 0;
-    for (size_t index = 0; index< contours.size(); index++)
-    {
-        double area = contourArea(contours[index]);
-
-        if (area > largest_area)
-        {
-            largest_area = area;
-            largest_contour_index = index;
-        }
-    }
-    return largest_contour_index;
-}
+#include "ObjectFinder.h"
 
 int main( int argc, char** argv )
 {
     cv::Mat image;
     cv::Mat msk(400, 400, CV_8UC1);
-    std::vector<std::vector<cv::Point> > contours;
-
-    std::vector<std::vector<cv::Point> > ref_contours;
-    cv::Mat ref_obj=cv::imread("../res/ball.jpg");
-    cv::Mat ref_msk = ref_obj.clone();
-    cv::cvtColor(ref_msk, ref_msk, cv::COLOR_BGR2GRAY);
-    ColorSegmentation::OthaSpaceThresholdingRGB(ref_obj, true, false, false, ref_msk);
-    cv::findContours(ref_msk, ref_contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
-    int ref_contour_idx = returnLargestContour(ref_contours);
-    drawContours(ref_obj, ref_contours, ref_contour_idx, cv::Scalar(0, 255, 0), 2);
-    //cv::imshow("ball", ref_obj);
-    //cv::waitKey(0);
+    ObjectFinder finder("../res/ball.jpg");
 
 #ifdef __linux
     raspicam::RaspiCam_Cv cap;
@@ -67,39 +41,12 @@ int main( int argc, char** argv )
         cap.grab();
         cap.retrieve(image);
         cv::resize(image, image, cv::Size(400, 400));
-        ColorSegmentation::OthaSpaceThresholdingRGB(image, true, false, false, msk);
-        //dilate the msk to cover white spots
-        cv::dilate(msk, msk, cv::Mat(), cv::Point(-1, -1), 2, 1, 1);
-
-        cv::Mat contourImage(image.size(), CV_8UC3, cv::Scalar(0, 0, 0));
-        cv::findContours(msk.clone(), contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
-        int largest_area = -1;
-        int largest_contour_index = -1;
-
-        ////maybe use matchShapes
-        //double hu[7];
-        //if (!contours.empty())
-        //{
-        //    cv::Moments mom=cv::moments(contours[largest_contour_index]);
-        //    cv::HuMoments(mom, hu);
-        //}
-        //double avg = cv::matchShapes(contours[largest_contour_index], ref_contours[ref_contour_idx], 1, 0);
         
-        for (size_t index = 0; index < contours.size(); index++)
-        {
-            int area = contourArea(contours[index]);
-
-            if (area > 1000)
-            {
-                if (cv::matchShapes(contours[index], ref_contours[ref_contour_idx], 1, 0) < 0.1) 
-                {
-                    largest_contour_index = index;
-                }
-            }
-        }
+        int largest_contour_index = finder.findObjectInFrame(image, msk);
+        
         if (largest_contour_index > 0)
         {
-            drawContours(image, contours, largest_contour_index, cv::Scalar(0, 255, 0), 2);
+            drawContours(image, finder.m_contours, largest_contour_index, cv::Scalar(0, 255, 0), 2);
             //drawContours(contourImage, contours, largest_contour_index, cv::Scalar(0, 255, 0), 2);
         }
 
