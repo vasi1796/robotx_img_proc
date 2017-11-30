@@ -16,7 +16,6 @@
 int main( int argc, char** argv )
 {
     cv::Mat image;
-    cv::Mat msk(400, 400, CV_8UC1);
     ObjectFinder finder("../res/ball.jpg");
 
 #ifdef __linux
@@ -42,17 +41,9 @@ int main( int argc, char** argv )
         cap.retrieve(image);
         cv::resize(image, image, cv::Size(400, 400));
         
-        int largest_contour_index = finder.findObjectInFrame(image, msk);
-        
-        if (largest_contour_index > 0)
-        {
-            drawContours(image, finder.m_contours, largest_contour_index, cv::Scalar(0, 255, 0), 2);
-            //drawContours(contourImage, contours, largest_contour_index, cv::Scalar(0, 255, 0), 2);
-        }
+        finder.processImage(image);
 
         imshow("original", image);
-        //imshow("contours", contourImage);
-        //imshow("mask", msk);
     }
     cv::destroyAllWindows();
 #ifdef __linux

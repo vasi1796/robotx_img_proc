@@ -4,6 +4,23 @@ ObjectFinder::ObjectFinder(std::string pathToRefImg)
 {
     initReferenceObject(pathToRefImg);
 }
+void ObjectFinder::processImage(cv::Mat image)
+{
+    cv::Mat msk(image.rows,image.cols,CV_8UC1);
+    bool contourFound = findObjectInFrame(image, msk);
+    if (contourFound)
+    {
+        centerObject(image, msk);
+        drawFoundContour(image);
+    }
+}
+void ObjectFinder::drawFoundContour(cv::Mat image)
+{
+    if (m_largestContourIndex > 0)
+    {
+        drawContours(image, m_contours, m_largestContourIndex, cv::Scalar(0, 255, 0), 2);
+    }
+}
 int ObjectFinder::findLargestContour(std::vector<std::vector<cv::Point> > contours)
 {
     double largest_area = -1;
@@ -20,7 +37,7 @@ int ObjectFinder::findLargestContour(std::vector<std::vector<cv::Point> > contou
     }
     return largest_contour_index;
 }
-int ObjectFinder::findObjectInFrame(cv::Mat frame,cv::Mat frameMask)
+bool ObjectFinder::findObjectInFrame(cv::Mat frame,cv::Mat frameMask)
 {
     ColorSegmentation::OthaSpaceThresholdingRGB(frame, true, false, false, frameMask);
     //dilate the msk to cover white spots
@@ -45,9 +62,14 @@ int ObjectFinder::findObjectInFrame(cv::Mat frame,cv::Mat frameMask)
     }
     if (largest_contour_index > 0)
     {
-        return largest_contour_index;
+        m_largestContourIndex = largest_contour_index;
+        return true;
     }
-    return -1;
+    return false;
+}
+void ObjectFinder::centerObject(cv::Mat image,cv::Mat msk)
+{
+    //m_contours[m_largestContourIndex]
 }
 void ObjectFinder::initReferenceObject(std::string pathToRefImg)
 {
@@ -61,6 +83,6 @@ void ObjectFinder::initReferenceObject(std::string pathToRefImg)
     {
     drawContours(m_refObject, m_refContours, m_refContourIdx, cv::Scalar(0, 255, 0), 2);
     }
-    cv::imshow("ball", m_refObject);
-    cv::waitKey(0);
+    //cv::imshow("ball", m_refObject);
+    //cv::waitKey(0);
 }
