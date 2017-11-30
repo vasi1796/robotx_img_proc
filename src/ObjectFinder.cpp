@@ -1,5 +1,7 @@
 #include "ObjectFinder.h"
 #include "ColorSegmentation.h"
+#define RIGHT_MARGIN 190
+#define LEFT_MARGIN 210
 ObjectFinder::ObjectFinder(std::string pathToRefImg)
 {
     initReferenceObject(pathToRefImg);
@@ -10,16 +12,16 @@ void ObjectFinder::processImage(cv::Mat image)
     bool contourFound = findObjectInFrame(image, msk);
     if (contourFound)
     {
-        centerObject(image, msk);
+        if (centerObject(image))
+        {
+            driveToObject();
+        }
         drawFoundContour(image);
     }
 }
 void ObjectFinder::drawFoundContour(cv::Mat image)
 {
-    if (m_largestContourIndex > 0)
-    {
         drawContours(image, m_contours, m_largestContourIndex, cv::Scalar(0, 255, 0), 2);
-    }
 }
 int ObjectFinder::findLargestContour(std::vector<std::vector<cv::Point> > contours)
 {
@@ -67,9 +69,30 @@ bool ObjectFinder::findObjectInFrame(cv::Mat frame,cv::Mat frameMask)
     }
     return false;
 }
-void ObjectFinder::centerObject(cv::Mat image,cv::Mat msk)
+bool ObjectFinder::centerObject(cv::Mat image)
 {
-    //m_contours[m_largestContourIndex]
+    cv::Rect objRectangle=cv::boundingRect(m_contours[m_largestContourIndex]);
+    int xCenter = objRectangle.x + objRectangle.width / 2;
+    int yCenter = objRectangle.y + objRectangle.height / 2;
+    //cv::circle(image, cv::Point(xCenter, yCenter), 5,cv::Scalar(255,0,0));
+    //cv::rectangle(image, objRectangle, cv::Scalar(0, 0, 255), 2);
+    if (xCenter < RIGHT_MARGIN)
+    {
+        std::cout << "command to right" << std::endl;
+    }
+    else if (xCenter > LEFT_MARGIN)
+    {
+        std::cout << "command to left" << std::endl;
+    }
+    else
+    {
+        std::cout << "object is in center" << std::endl;
+        return true;
+    }
+    return false;
+}
+void ObjectFinder::driveToObject()
+{
 }
 void ObjectFinder::initReferenceObject(std::string pathToRefImg)
 {
