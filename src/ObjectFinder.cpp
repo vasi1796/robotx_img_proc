@@ -2,6 +2,7 @@
 #include "ColorSegmentation.h"
 #define RIGHT_MARGIN 190
 #define LEFT_MARGIN 210
+#define GRAB_MARGIN 300
 ObjectFinder::ObjectFinder(std::string pathToRefImg)
 {
     initReferenceObject(pathToRefImg);
@@ -93,6 +94,16 @@ bool ObjectFinder::centerObject(cv::Mat image)
 }
 void ObjectFinder::driveToObject()
 {
+    cv::Rect objRectangle = cv::boundingRect(m_contours[m_largestContourIndex]);
+    int yCenter = objRectangle.y + objRectangle.height / 2;
+    if (yCenter < GRAB_MARGIN)
+    {
+        std::cout << "drive forward" << std::endl;
+    }
+    else
+    {
+        std::cout << "grab object" << std::endl;
+    }
 }
 void ObjectFinder::initReferenceObject(std::string pathToRefImg)
 {
