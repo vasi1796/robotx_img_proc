@@ -31,3 +31,13 @@
 *.out
 *.app
 build/
+
+src/haar_cascade_creator/data_acquisition/neg/
+
+src/haar_cascade_creator/data_acquisition/poz/
+
+src/haar_cascade_creator/data_acquisition/real/
+
+src/haar_cascade_creator/\.idea/
+
+src/haar_cascade_creator/data_acquisition/uglies/
