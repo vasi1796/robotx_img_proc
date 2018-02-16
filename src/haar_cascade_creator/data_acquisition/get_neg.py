@@ -5,9 +5,9 @@ import os
 
 
 def store_raw_images():
-    neg_images_link = 'http://image-net.org/api/text/imagenet.synset.geturls?wnid=n07565259'
+    neg_images_link = 'http://image-net.org/api/text/imagenet.synset.geturls?wnid=n09282208'
     neg_image_urls = urllib.request.urlopen(neg_images_link).read().decode()
-    pic_num = 1
+    pic_num = 757
 
     if not os.path.exists('neg'):
         os.makedirs('neg')
@@ -43,5 +43,5 @@ def find_uglies():
 
 
 if __name__ == "__main__":
-    # store_raw_images()
+    store_raw_images()
     find_uglies()

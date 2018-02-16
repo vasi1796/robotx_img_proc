@@ -12,7 +12,7 @@ while 1:
 
     # add this
     # image, reject levels level weights.
-    cubes = cube_cascade.detectMultiScale(gray, 3, 4)
+    cubes = cube_cascade.detectMultiScale(gray, 2, 5)
 
     # add this
     for (x, y, w, h) in cubes:

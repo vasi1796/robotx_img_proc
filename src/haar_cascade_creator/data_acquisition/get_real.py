@@ -12,8 +12,9 @@ if __name__ == "__main__":
         ret, mat = cap.read()
         if mat is not None:
             mat = cv2.cvtColor(mat, cv2.COLOR_BGR2GRAY)
-            mat = cv2.resize(mat, (100, 100))
-            cv2.imwrite("real/img" + str(pic_num) + ".jpg", mat)
-            pic_num += 1
+            mat = cv2.resize(mat, (130, 100))
             cv2.imshow("cube", mat)
-            cv2.waitKey(1)
+            key = cv2.waitKey(1)
+            if key == ord('v'):
+                cv2.imwrite("real/img" + str(pic_num) + ".jpg", mat)
+                pic_num += 1
