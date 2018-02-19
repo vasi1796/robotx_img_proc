@@ -2,7 +2,7 @@ import cv2
 import os
 
 cap = cv2.VideoCapture(0)
-pic_num = 1
+pic_num = 148
 
 if __name__ == "__main__":
     if not os.path.exists('real'):

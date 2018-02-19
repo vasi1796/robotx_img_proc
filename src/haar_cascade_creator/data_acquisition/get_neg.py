@@ -7,7 +7,7 @@ import os
 def store_raw_images():
     neg_images_link = 'http://image-net.org/api/text/imagenet.synset.geturls?wnid=n09282208'
     neg_image_urls = urllib.request.urlopen(neg_images_link).read().decode()
-    pic_num = 757
+    pic_num = 1
 
     if not os.path.exists('neg'):
         os.makedirs('neg')
@@ -18,7 +18,7 @@ def store_raw_images():
             urllib.request.urlretrieve(i, "neg/" + str(pic_num) + ".jpg")
             img = cv2.imread("neg/" + str(pic_num) + ".jpg", cv2.IMREAD_GRAYSCALE)
             # should be larger than samples / pos pic (so we can place our image on it)
-            resized_image = cv2.resize(img, (100, 100))
+            resized_image = cv2.resize(img, (250, 200))
             cv2.imwrite("neg/" + str(pic_num) + ".jpg", resized_image)
             pic_num += 1
 
@@ -43,5 +43,5 @@ def find_uglies():
 
 
 if __name__ == "__main__":
-    store_raw_images()
+    #store_raw_images()
     find_uglies()
