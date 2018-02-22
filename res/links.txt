@@ -3,3 +3,4 @@ https://www.cs.cmu.edu/~efros/courses/LBMV07/Papers/viola-cvpr-01.pdf
 https://pythonprogramming.net/haar-cascade-object-detection-python-opencv-tutorial/
 http://coding-robin.de/2013/07/22/train-your-own-opencv-haar-classifier.html
 https://github.com/mrnugget/opencv-haar-classifier-training
+https://memememememememe.me/post/training-haar-cascades/
