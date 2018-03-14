@@ -41,3 +41,5 @@ src/haar_cascade_creator/data_acquisition/real/
 src/haar_cascade_creator/\.idea/
 
 src/haar_cascade_creator/data_acquisition/uglies/
+
+\.idea/

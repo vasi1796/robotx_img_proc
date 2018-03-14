@@ -15,7 +15,7 @@
 int main( int argc, char** argv )
 {
     cv::Mat image;
-    ObjectFinder finder("../res/ball.jpg");
+    ObjectFinder finder("../res/ref.jpg");
 
 #ifdef __linux
     raspicam::RaspiCam_Cv cap;
@@ -26,7 +26,7 @@ int main( int argc, char** argv )
         return -1;
     }
 #elif _WIN32
-    cv::VideoCapture cap(0);
+    cv::VideoCapture cap(1);
     
     if (!cap.isOpened())
     {
