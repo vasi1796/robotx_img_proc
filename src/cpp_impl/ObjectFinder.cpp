@@ -9,7 +9,7 @@ ObjectFinder::ObjectFinder(std::string pathToRefImg)
 }
 void ObjectFinder::processImage(cv::Mat image)
 {
-    cv::Mat msk(image.rows,image.cols,CV_8UC1);
+    cv::Mat msk(image.rows, image.cols, CV_8UC1);
     bool contourFound = findObjectInFrame(image, msk);
     if (contourFound)
     {
@@ -22,13 +22,13 @@ void ObjectFinder::processImage(cv::Mat image)
 }
 void ObjectFinder::drawFoundContour(cv::Mat image)
 {
-        drawContours(image, m_contours, m_largestContourIndex, cv::Scalar(0, 255, 0), 2);
+    drawContours(image, m_contours, m_largestContourIndex, cv::Scalar(0, 255, 0), 2);
 }
 int ObjectFinder::findLargestContour(std::vector<std::vector<cv::Point> > contours)
 {
     double largest_area = -1;
     int largest_contour_index = -1;
-    for (auto index = 0; index< contours.size(); index++)
+    for (auto index = 0; index < contours.size(); index++)
     {
         double area = contourArea(contours[index]);
 
@@ -40,40 +40,69 @@ int ObjectFinder::findLargestContour(std::vector<std::vector<cv::Point> > contou
     }
     return largest_contour_index;
 }
-bool ObjectFinder::findObjectInFrame(cv::Mat frame,cv::Mat frameMask)
+
+void ObjectFinder::initReferenceObject(std::string pathToRefImg)
 {
-    //ColorSegmentation::OthaSpaceThresholdingRGB(frame, true, false, false, frameMask);
-    //cv::inRange(frame, cv::Scalar(0, 0, 0), cv::Scalar(255, 0, 0), frameMask);
-    //dilate the msk to cover white spots
-    cv::dilate(frameMask, frameMask, cv::Mat(), cv::Point(-1, -1), 2, 1, 1);
-
-    cv::Mat contourImage(frame.size(), CV_8UC3, cv::Scalar(0, 0, 0));
-    cv::findContours(frameMask.clone(), m_contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
-    double largest_area = -1;
-    int largest_contour_index = -1;
-
-    for (auto index = 0; index < m_contours.size(); index++)
+    m_refObject = cv::imread(pathToRefImg);
+    cv::Mat ref_msk = m_refObject.clone();
+    cv::cvtColor(ref_msk, ref_msk, cv::COLOR_BGR2GRAY);
+    cv::inRange(m_refObject, cv::Scalar(0, 0, 100), cv::Scalar(0, 0, 255), ref_msk);
+    cv::findContours(ref_msk, m_refContours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+    m_refContourIdx = findLargestContour(m_refContours);
+    if (m_refContourIdx >= 0)
     {
-        double area = cv::contourArea(m_contours[index]);
+        drawContours(m_refObject, m_refContours, m_refContourIdx, cv::Scalar(0, 255, 0), 2);
+    }
+    //cv::imshow("reference", m_refObject);
+    //cv::waitKey(0);
+}
 
-        if (area > 1000)
+bool ObjectFinder::findObjectInFrame(cv::Mat frame, cv::Mat frameMask)
+{
+    bool result=ColorSegmentation::OthaSpaceThresholdingRGB(frame, false, false, true, frameMask);
+    cv::imshow("msk", frameMask);
+    if (result)
+    {
+        //dilate the msk to cover white spots
+        cv::dilate(frameMask, frameMask, cv::Mat(), cv::Point(-1, -1), 2, 1, 1);
+
+        cv::findContours(frameMask.clone(), m_contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+        int largest_contour_index = -1;
+        for (auto index = 0; index < m_contours.size(); index++)
         {
-            if (cv::matchShapes(m_contours[index], m_refContours[m_refContourIdx], 1, 0) < 0.01)
+            double area = cv::contourArea(m_contours[index]);
+
+            if (area > 7000 && area < 20000)
             {
-                largest_contour_index = index;
+                /*if (cv::matchShapes(m_contours[index], m_refContours[m_refContourIdx], 1, 0) < 0.01)
+                {
+                    largest_contour_index = index;
+                }*/
+                auto perim = cv::arcLength(m_contours[index], true);
+                std::vector<cv::Point> pred;
+                cv::approxPolyDP(m_contours[index], pred, 0.04*perim, true);
+                cv::Rect found_shape(cv::boundingRect(pred));
+                float ratio = found_shape.width / static_cast<float>(found_shape.height);
+                if (ratio > 0.5&&ratio < 1.2)
+                {
+                    cv::rectangle(frame, found_shape, cv::Scalar(0, 255, 0), 2);
+                    largest_contour_index = index;
+                    std::cout << area << std::endl;
+                }
             }
         }
-    }
-    if (largest_contour_index > 0)
-    {
-        m_largestContourIndex = largest_contour_index;
-        return true;
+        if (largest_contour_index > 0)
+        {
+            m_largestContourIndex = largest_contour_index;
+            return true;
+        }
     }
     return false;
 }
+
 bool ObjectFinder::centerObject(cv::Mat image)
 {
-    cv::Rect objRectangle=cv::boundingRect(m_contours[m_largestContourIndex]);
+    cv::Rect objRectangle = cv::boundingRect(m_contours[m_largestContourIndex]);
     int xCenter = objRectangle.x + objRectangle.width / 2;
     int yCenter = objRectangle.y + objRectangle.height / 2;
     //cv::circle(image, cv::Point(xCenter, yCenter), 5,cv::Scalar(255,0,0));
@@ -105,19 +134,4 @@ void ObjectFinder::driveToObject()
     {
         std::cout << "grab object" << std::endl;
     }
-}
-void ObjectFinder::initReferenceObject(std::string pathToRefImg)
-{
-    m_refObject = cv::imread(pathToRefImg);
-    cv::Mat ref_msk = m_refObject.clone();
-    cv::cvtColor(ref_msk, ref_msk, cv::COLOR_BGR2GRAY);
-    cv::inRange(m_refObject, cv::Scalar(0,0,100), cv::Scalar(0,0,255), ref_msk);
-    cv::findContours(ref_msk, m_refContours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
-    m_refContourIdx = findLargestContour(m_refContours);
-    if (m_refContourIdx >= 0)
-    {
-    drawContours(m_refObject, m_refContours, m_refContourIdx, cv::Scalar(0, 255, 0), 2);
-    }
-    cv::imshow("reference", m_refObject);
-    cv::waitKey(0);
 }

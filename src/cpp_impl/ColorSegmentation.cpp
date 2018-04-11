@@ -2,7 +2,7 @@
 ColorSegmentation::ColorSegmentation()
 {
 }
-bool ColorSegmentation::OthaSpaceThresholdingRGB(const cv::Mat& src, bool bSegmentRed, bool bSegmentBlue, bool bSegmentYellow, cv::Mat& dstMask, float dThR1 /*= 0.024*/, float dThR2 /*= -0.027*/, float dThB1 /*= -0.04*/, float dThB2 /*= 0.2*/, float dThY1 /*= 0.071*/, float dThY2 /*= 0.027*/, unsigned int nThL /*= 100*/, unsigned int nRGDif /*= 15*/, unsigned int nGBDif /*= 25*/, unsigned int nBRDif /*= 14*/)
+bool ColorSegmentation::OthaSpaceThresholdingRGB(const cv::Mat& src, bool bSegmentRed, bool bSegmentYellow, bool bSegmentBlue, cv::Mat& dstMask, float dThR1 /*= 0.024*/, float dThR2 /*= -0.027*/, float dThB1 /*= -0.04*/, float dThB2 /*= 0.2*/, float dThY1 /*= 0.071*/, float dThY2 /*= 0.027*/, unsigned int nThL /*= 100*/, unsigned int nRGDif /*= 15*/, unsigned int nGBDif /*= 25*/, unsigned int nBRDif /*= 14*/)
  {
      if (src.channels() != 3)
      {
@@ -17,7 +17,7 @@ bool ColorSegmentation::OthaSpaceThresholdingRGB(const cv::Mat& src, bool bSegme
      }
 
      // check validity of the selected color 
-     if (bSegmentRed == false && bSegmentBlue == false && bSegmentYellow == false)
+     if (bSegmentRed == false && bSegmentYellow == false && bSegmentBlue == false)
      {
          std::cout << "OthaSpaceThresholding error! No color selected for segmentation." << std::endl;
          return false;
@@ -91,13 +91,13 @@ bool ColorSegmentation::OthaSpaceThresholdingRGB(const cv::Mat& src, bool bSegme
 				 c++;
              }
 
-             if (bSegmentBlue)
+             if (bSegmentYellow)
              {
                  ((P1 <= dThB1) && (std::fabs(P2)<= dThB2)) ? *c |= 255 : *c &= 0;
                  c++;
              }
 
-             if (bSegmentYellow)
+             if (bSegmentBlue)
              {
                  ((P1 >= dThY1) && (std::fabs(P2)<= dThY2)) ? *c |= 255 : *c &= 0;
                  c++;
