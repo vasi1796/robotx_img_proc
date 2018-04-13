@@ -2,8 +2,8 @@
 #include "ColorSegmentation.h"
 #define RIGHT_MARGIN 190
 #define LEFT_MARGIN 210
-#define GRAB_MARGIN 300
-ObjectFinder::ObjectFinder(std::string pathToRefImg)
+#define GRAB_MARGIN 270
+ObjectFinder::ObjectFinder(std::string pathToRefImg):m_textColor(0, 0, 255)
 {
     initReferenceObject(pathToRefImg);
 }
@@ -15,7 +15,7 @@ void ObjectFinder::processImage(cv::Mat image)
     {
         if (centerObject(image))
         {
-            driveToObject();
+            driveToObject(image);
         }
         drawFoundContour(image);
     }
@@ -109,29 +109,39 @@ bool ObjectFinder::centerObject(cv::Mat image)
     //cv::rectangle(image, objRectangle, cv::Scalar(0, 0, 255), 2);
     if (xCenter < RIGHT_MARGIN)
     {
-        std::cout << "command to right" << std::endl;
+        cv::putText(image, "Command to left", cvPoint(30, 30),
+            cv::FONT_HERSHEY_DUPLEX, 0.8, m_textColor, 1, CV_AA);
+        //std::cout << "command to right" << std::endl;
     }
     else if (xCenter > LEFT_MARGIN)
     {
-        std::cout << "command to left" << std::endl;
+        cv::putText(image, "Command to right", cvPoint(30, 30),
+            cv::FONT_HERSHEY_DUPLEX, 0.8, m_textColor, 1, CV_AA);
+        //std::cout << "command to left" << std::endl;
     }
     else
     {
-        std::cout << "object is in center" << std::endl;
+        cv::putText(image, "Object in center", cvPoint(30, 30),
+            cv::FONT_HERSHEY_DUPLEX, 0.8, m_textColor, 1, CV_AA);
+        //std::cout << "object is in center" << std::endl;
         return true;
     }
     return false;
 }
-void ObjectFinder::driveToObject()
+void ObjectFinder::driveToObject(cv::Mat image)
 {
     cv::Rect objRectangle = cv::boundingRect(m_contours[m_largestContourIndex]);
     int yCenter = objRectangle.y + objRectangle.height / 2;
     if (yCenter < GRAB_MARGIN)
     {
-        std::cout << "drive forward" << std::endl;
+        cv::putText(image, "Drive forward", cvPoint(30, 50),
+            cv::FONT_HERSHEY_DUPLEX, 0.8, m_textColor, 1, CV_AA);
+        //std::cout << "drive forward" << std::endl;
     }
     else
     {
-        std::cout << "grab object" << std::endl;
+        cv::putText(image, "Grasp object", cvPoint(30, 50),
+            cv::FONT_HERSHEY_DUPLEX, 0.8, m_textColor, 1, CV_AA);
+        //std::cout << "grasp object" << std::endl;
     }
 }

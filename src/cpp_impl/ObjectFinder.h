@@ -9,6 +9,7 @@ private:
     cv::Mat m_refObject;
     int m_refContourIdx;
     int m_largestContourIndex;
+    cv::Scalar m_textColor;
     std::vector<std::vector<cv::Point> > m_contours;
 
     void drawFoundContour(cv::Mat image);
@@ -16,7 +17,7 @@ private:
     int findLargestContour(std::vector<std::vector<cv::Point> > contours);
     bool findObjectInFrame(cv::Mat frame, cv::Mat frameMask);
     bool centerObject(cv::Mat image);
-    void driveToObject();
+    void driveToObject(cv::Mat image);
 public:
     ObjectFinder(std::string pathToRefImg); 
     void processImage(cv::Mat image);
