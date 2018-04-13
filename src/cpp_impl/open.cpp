@@ -18,13 +18,14 @@ int main( int argc, char** argv )
     ObjectFinder finder("../res/ref.jpg");
 
 #ifdef __linux
-    raspicam::RaspiCam_Cv cap;
+	cv::VideoCapture cap(0);
+    /*raspicam::RaspiCam_Cv cap;
     cap.set(CV_CAP_PROP_FORMAT, CV_8UC3);
     if (!cap.open())                              // Check for invalid input
     {
         std::cout << "Could not open or find the image" << std::endl;
         return -1;
-    }
+    }*/
 #elif _WIN32
     cv::VideoCapture cap(1);
     

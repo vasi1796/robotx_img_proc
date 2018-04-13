@@ -87,7 +87,7 @@ bool ObjectFinder::findObjectInFrame(cv::Mat frame, cv::Mat frameMask)
                 {
                     cv::rectangle(frame, found_shape, cv::Scalar(0, 255, 0), 2);
                     largest_contour_index = index;
-                    std::cout << area << std::endl;
+                    //std::cout << area << std::endl;
                 }
             }
         }
