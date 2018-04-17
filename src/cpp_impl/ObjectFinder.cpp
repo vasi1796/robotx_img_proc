@@ -1,8 +1,8 @@
 #include "ObjectFinder.h"
 #include "ColorSegmentation.h"
-#define RIGHT_MARGIN 190
-#define LEFT_MARGIN 210
-#define GRAB_MARGIN 270
+#define RIGHT_MARGIN 180
+#define LEFT_MARGIN 230
+#define GRAB_MARGIN 290
 ObjectFinder::ObjectFinder(std::string pathToRefImg):m_textColor(0, 0, 255)
 {
     initReferenceObject(pathToRefImg);

@@ -43,8 +43,8 @@ int main( int argc, char** argv )
         
         finder.processImage(image);
 
-        cv::rectangle(image, cv::Rect(190, 0, 30, 400), cv::Scalar(255, 0, 0), 2);
-        cv::rectangle(image, cv::Rect(180, 270, 50, 400), cv::Scalar(0, 255, 0), 2);
+        cv::rectangle(image, cv::Rect(180, 0, 50, 400), cv::Scalar(255, 0, 0), 2);
+        cv::rectangle(image, cv::Rect(180, 290, 50, 400), cv::Scalar(0, 255, 0), 2);
         imshow("original", image);
     }
     cv::destroyAllWindows();
