@@ -43,3 +43,7 @@ src/haar_cascade_creator/\.idea/
 src/haar_cascade_creator/data_acquisition/uglies/
 
 \.idea/
+
+res/milestone_video/
+
+*.mp4
