@@ -1,3 +1,6 @@
+#ifdef __linux
+#include <raspicam/raspicam_cv.h>
+#include "Sensors.h"
 #include<wiringPi.h>
 
 class Sensors
@@ -11,3 +14,4 @@ public:
 	int getIR();
 	int getDistance();
 };
+#endif

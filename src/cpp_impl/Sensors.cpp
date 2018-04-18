@@ -1,3 +1,6 @@
+#ifdef __linux
+#include <raspicam/raspicam_cv.h>
+#include "Sensors.h"
 #include "Sensors.h"
 #include <stdio.h>
 #include <thread>
@@ -41,3 +44,4 @@ int Sensors::getDistance()
 
 	printf("Distance = %lf\n", distance);
 }
+#endif

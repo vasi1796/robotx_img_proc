@@ -6,25 +6,25 @@
 #include <opencv2/opencv.hpp>
 #ifdef __linux
 #include <raspicam/raspicam_cv.h>
+#include "Sensors.h"
 #elif _WIN32
 // windows code goes here
 #endif
 #include <iostream>
 #include "ObjectFinder.h"
-#include "Sensors.h"
 
 int main( int argc, char** argv )
 {
-	Sensors sensor;
-	while(true)
-	{
-		//sensor.getIR();
-		sensor.getDistance();
-	}
     cv::Mat image;
     ObjectFinder finder("../res/ref.jpg");
 
 #ifdef __linux
+    Sensors sensor;
+    while (true)
+    {
+        //sensor.getIR();
+        sensor.getDistance();
+    }
 	cv::VideoCapture cap(0);
     /*raspicam::RaspiCam_Cv cap;
     cap.set(CV_CAP_PROP_FORMAT, CV_8UC3);
