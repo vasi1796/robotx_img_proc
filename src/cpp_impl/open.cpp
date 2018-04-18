@@ -11,9 +11,16 @@
 #endif
 #include <iostream>
 #include "ObjectFinder.h"
+#include "Sensors.h"
 
 int main( int argc, char** argv )
 {
+	Sensors sensor;
+	while(true)
+	{
+		//sensor.getIR();
+		sensor.getDistance();
+	}
     cv::Mat image;
     ObjectFinder finder("../res/ref.jpg");
 
