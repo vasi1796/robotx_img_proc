@@ -22,7 +22,7 @@ int main( int argc, char** argv )
     Sensors sensor;
     while (true)
     {
-        //sensor.getIR();
+        sensor.getIR();
         sensor.getDistance();
     }
 	cv::VideoCapture cap(0);
