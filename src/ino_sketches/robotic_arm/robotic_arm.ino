@@ -7,14 +7,14 @@
 
 #define take_cube_position_M1 95
 #define take_cube_position_M2 80
-#define take_cube_position_M3 150
+#define take_cube_position_M3 145
 
-#define deposit_cube_position_M1 145
+#define deposit_cube_position_M1 155
 #define deposit_cube_position_M2 170
 #define deposit_cube_position_M3 80
 
 #define position_for_press_button_M1 90 
-#define position_for_press_button_M2 100
+#define position_for_press_button_M2 95
 #define position_for_press_button_M3 150
 #define position_for_press_button_preparation_M3 120
 
@@ -33,9 +33,9 @@
 #define command_for_take_and_deposit_cube   '1'
 #define command_for_throwing_balls          '2'
 #define command_for_press_button            '3'
-#define command_for_drop_cubes               '4'
+#define command_for_drop_cubs               '4'
 
-char myCommand;
+char myCommand = 0;
 
 short current_value_M1;
 short current_value_M2;
@@ -67,11 +67,10 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 //#define SERVOMIN_HIGH  800 // this is the 'minimum' pulse length count (out of 4096)
 //#define SERVOMAX_HIGH  2200 // this is the 'maximum' pulse length count (out of 4096)
 
-
 void setup() {
   Serial.begin(9600);
   Serial.println("<Arduino is ready, bitch!>");
-
+  
   pwm.begin();
   
   pwm.setPWMFreq(50);  // Analog servos run at ~60 Hz updates
@@ -80,6 +79,18 @@ void setup() {
   
   pinMode(pomp, OUTPUT);
   pinMode(valv, OUTPUT); 
+
+  pwm.setPWM(7, 0, map(145, 0, 180, 0, 410));
+  pwm.setPWM(5, 0, map(120, 0, 180, 0, 410));
+
+  pwm.setPWM(1, 0, map(initial_position_M1, 0, 180, 0, 410));
+  pwm.setPWM(2, 0, map(initial_position_M2, 0, 180, 0, 410));
+  pwm.setPWM(3, 0, map(initial_position_M3, 0, 180, 0, 410));
+
+  current_value_M1 = initial_position_M1;
+  current_value_M2 = initial_position_M2;
+  current_value_M3 = initial_position_M3;
+
 }
 
 void loop() {
@@ -110,7 +121,7 @@ void loop() {
         digitalWrite(pomp,HIGH);
         digitalWrite(valv,LOW);
    
-        delay(1000);
+        delay(1000); 
    
         deposit_cube_position(current_value_M1, current_value_M2, current_value_M3);
         current_value_M1 = deposit_cube_position_M1;
@@ -133,10 +144,10 @@ void loop() {
         Serial.println("Iti apasa pe buton");
         switch_button();
       }
-      else if(myCommand == command_for_drop_cubes)
+      else if(myCommand == command_for_drop_cubs)
       {
         Serial.println("Iti lasa cuburile");
-        drop_cubes();
+        drop_cubs();
       }
       else
       {
@@ -147,31 +158,6 @@ void loop() {
       newData = false;
     }
    
-/*
-    nr_of_cubs++;
-    
-    if(3 == nr_of_cubs)
-    {
-      
-      //pentru suport cuburi
-      pwm.setPWM(7, 0, map(40, 0, 180, 0, 410));
-      delay(2000);
-      //pentru usa
-      pwm.setPWM(5, 0, map(180, 0, 180, 0, 410));
-      delay(1000);
-      while(1)
-      {
-        ;
-      }
-    }
-        
-   
-    initial_position(current_value_M1, current_value_M2, current_value_M3);
-    current_value_M1 = initial_position_M1;
-    current_value_M2 = initial_position_M2;
-    current_value_M3 = initial_position_M3;
-    delay(2000);
-  */
 }
 
 void recvOneCommand() 
@@ -382,18 +368,21 @@ void drop_balls()
 
 //functie pentru apasare switch; la inaltimea de aproximativ de 13 cm;
 void switch_button()
-{
+{for(int x =1; x <= 2; x++)
+  {
   pwm.setPWM(1, 0, map(position_for_press_button_M1, 0, 180, 0, 410));
   pwm.setPWM(2, 0, map(position_for_press_button_M2, 0, 180, 0, 410));
   pwm.setPWM(3, 0, map(position_for_press_button_M3, 0, 180, 0, 410));
   delay(3000);
   pwm.setPWM(3, 0, map(position_for_press_button_preparation_M3, 0, 180, 0, 410));
   delay(3000);  
+  }
 }
 
-void drop_cubes()
+void drop_cubs()
 {
       pwm.setPWM(7, 0, map(40, 0, 180, 0, 410));
       delay(1500);
       pwm.setPWM(5, 0, map(180, 0, 180, 0, 410));
 }
+
