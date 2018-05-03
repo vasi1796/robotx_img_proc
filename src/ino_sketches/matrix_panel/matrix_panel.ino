@@ -109,7 +109,7 @@
     MaxMatrix m(DIN, CS, CLK, maxInUse);
     byte buffer[10];
   
-    char text[]= "RobotX    "; // Scrolling text
+    char text[]= "RobotX CiTaRO    "; // Scrolling text
     void setup() {
       m.init(); // module initialize
       m.setIntensity(15); // dot matix intensity 0-15
