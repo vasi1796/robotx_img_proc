@@ -1,0 +1,3 @@
+[submodule "src\\haar_cascade_creator\\sub_module"]
+	path = src\\haar_cascade_creator\\sub_module
+	url = https://github.com/mrnugget/opencv-haar-classifier-training
