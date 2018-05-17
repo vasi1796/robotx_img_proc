@@ -60,6 +60,10 @@ void ObjectFinder::initReferenceObject(std::string pathToRefImg)
 bool ObjectFinder::findObjectInFrame(cv::Mat frame, cv::Mat frameMask)
 {
     bool result=ColorSegmentation::OthaSpaceThresholdingRGB(frame, false, false, true, frameMask);
+    //bool result = true;
+    //cv::Mat LAB_mat;
+    //cv::cvtColor(frame, LAB_mat, cv::COLOR_BGR2Lab);
+    //cv::inRange(LAB_mat,cv::Scalar(20,115,70),cv::Scalar(255,145,120),frameMask);
     cv::imshow("msk", frameMask);
     if (result)
     {

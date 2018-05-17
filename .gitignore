@@ -47,3 +47,5 @@ src/haar_cascade_creator/data_acquisition/uglies/
 res/milestone_video/
 
 *.mp4
+
+res/presentations/

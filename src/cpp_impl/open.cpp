@@ -8,41 +8,41 @@
 #include <raspicam/raspicam_cv.h>
 #include "Sensors.h"
 #include "pi2c.h"
+void testLinuxFunctions()
+{
+    Pi2c arduino1(4); //Create a new object "arduino" using address "0x07"
+    Pi2c arduino2(5);
+    char receive1[16]; //Create a buffer of char (single bytes) for the data
+    char receive2[16];
+
+    //Receive from the Arduino and put the contents into the "receive" char array
+    arduino1.i2cRead(receive1, 16);
+    arduino2.i2cRead(receive2, sizeof(float) * 3);
+    float u1;
+    float u2;
+    float u3;
+    memcpy(&u1, &receive2[0], sizeof(float));
+    memcpy(&u2, &receive2[sizeof(float)], sizeof(float));
+    memcpy(&u3, &receive2[sizeof(float) * 2], sizeof(float));
+    //Print out what the Arduino is sending...
+    std::cout << "Arduino1 Says: " << receive1 << std::endl;
+    std::cout << "Arduino2 Says: " << u1 << "," << u2 << "," << u3 << std::endl;
+
+    //Send an 16 bit integer
+    arduino1.i2cWriteArduinoInt(69);
+    arduino2.i2cWriteArduinoInt(96);
+    /*Sensors sensor;
+    while (true)
+    {
+    sensor.getIR();
+    sensor.getDistance();
+    }*/
+}
 #elif _WIN32
 // windows code goes here
 #endif
 #include <iostream>
 #include "ObjectFinder.h"
-void testLinuxFunctions()
-{
-	Pi2c arduino1(4); //Create a new object "arduino" using address "0x07"
-	Pi2c arduino2(5);
-    char receive1[16]; //Create a buffer of char (single bytes) for the data
-    char receive2[16];
-
-    //Receive from the Arduino and put the contents into the "receive" char array
-    arduino1.i2cRead(receive1,16);
-    arduino2.i2cRead(receive2,sizeof(float)*3);
-    float u1;
-    float u2;
-    float u3;
-    memcpy(&u1,&receive2[0],sizeof(float));
-    memcpy(&u2,&receive2[sizeof(float)],sizeof(float));
-    memcpy(&u3,&receive2[sizeof(float)*2],sizeof(float));
-     //Print out what the Arduino is sending...
-    std::cout << "Arduino1 Says: " << receive1 << std::endl;
-    std::cout << "Arduino2 Says: " << u1 <<","<<u2<<","<<u3<< std::endl;
-
-    //Send an 16 bit integer
-    arduino1.i2cWriteArduinoInt(69);
-    arduino2.i2cWriteArduinoInt(96);
-	/*Sensors sensor;
-    while (true)
-    {
-        sensor.getIR();
-        sensor.getDistance();
-    }*/	
-}
 int main( int argc, char** argv )
 {
     cv::Mat image;
